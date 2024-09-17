@@ -1,0 +1,16 @@
+.ShoeDisplay{
+    margin-top: 35px;
+}
+.ShoeDisplay h2{
+    font-size: max(1.8vw, 25px);
+    font-weight: 700;
+}
+.ShoeList{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    row-gap: 50px;
+    gap: 50px;
+    margin-top: 30px;
+}
+
+

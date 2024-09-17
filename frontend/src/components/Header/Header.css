@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Charmonman:wght@400;700&family=Itim&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+.header {
+    height: 35vw;
+    margin: 30px auto;
+    background: url('/header_img.jpg') no-repeat;
+    background-size: cover;
+    position: relative;
+    border-radius: 15px;
+    background-position: center;
+}
+
+.headerContent {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 1.5vw;
+    max-width: 50%;
+    bottom: 10%;
+    left: 5vw;
+    animation: fadeIn 3s;
+}
+
+span {
+    text-transform: capitalize;
+    color: crimson;
+    font-family: 'itim';
+}
+
+.headerContent h2 {
+    font-weight: 500;
+    color: #3b3b3b;
+    font-size: max(4.5vw, 22px);
+}
+
+.headerContent p {
+    color: #3b3b3b;
+    font-size: 1vw;
+    font-weight: 500;
+}
+
+.headerContent button {
+    border: none;
+    color: #fff;
+    font-weight: 500;
+    padding: 1vw 2.3vw;
+    background: rgb(252, 0, 50, 0.5);
+    font-size: max(1vw, 13px);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: ease-in-out 0.3s;
+}
+.headerContent button:hover{
+    background: crimson;
+}
+
+
+
+/* ------RESPOSIVENESS--------- */
+@media screen and (max-width: 1050px){
+    .headerContent{
+        max-width: 45%;
+    }
+    }
+
+    @media screen and (max-width: 750px){
+.header {
+    height: 25dvh;
+}
+        .headerContent{
+            max-width: 60%; 
+        }
+        .headerContent p{
+            display: none;
+        }
+        .headerContent button{
+            padding: 1vw 2vw;
+        }
+        }

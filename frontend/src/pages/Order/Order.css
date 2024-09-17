@@ -1,0 +1,50 @@
+.Order {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: start;
+    gap: 50px;
+    margin-top: 50px;
+}
+.Order p, h2{
+    color: #000;
+}
+.orderLeft{
+    width: 100%;
+    max-width: max(30%, 500px);
+}
+.orderLeft .title{
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 50px;
+}
+.orderLeft input{
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #c5c5c5;
+    border-radius: 5px;
+    outline: crimson;
+}
+.orderLeft .fields{
+    display: flex;
+    gap: 10px;
+}
+.orderRight{
+    width: 100%;
+    max-width: max(40% ,500px);
+}
+.orderRight .cartTotal button{
+    margin-top: 30px;
+}
+
+@media screen and (max-width: 750px){
+    .Order {
+        flex-direction: column;
+    }
+    .orderRight .cartTotal button{
+        width: 25dvh;
+        align-self: center;
+    }
+}
