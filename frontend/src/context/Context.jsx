@@ -11,23 +11,29 @@ const ContextProvider = (props) => {
 
   const addToCart = (itemId) => {
     setCartItems((prev) => {
-      if (!prev[itemId]) {
-        return { ...prev, [itemId]: 1 };
+      const updatedCart = { ...prev };
+      if (!updatedCart[itemId]) {
+        updatedCart[itemId] = 1;
       } else {
-        return { ...prev, [itemId]: prev[itemId] + 1 };
+        updatedCart[itemId] += 1;
       }
+      // Save to localStorage
+      localStorage.setItem('cartItems', JSON.stringify(updatedCart));
+      return updatedCart;
     });
   };
 
   const removeFromCart = (itemId) => {
     setCartItems((prev) => {
-      if (prev[itemId] === 1) {
-        const updatedCart = { ...prev };
+      const updatedCart = { ...prev };
+      if (updatedCart[itemId] === 1) {
         delete updatedCart[itemId];
-        return updatedCart;
       } else {
-        return { ...prev, [itemId]: prev[itemId] - 1 };
+        updatedCart[itemId] -= 1;
       }
+      // Save to localStorage
+      localStorage.setItem('cartItems', JSON.stringify(updatedCart));
+      return updatedCart;
     });
   };
 
@@ -53,6 +59,12 @@ const ContextProvider = (props) => {
       const storedToken = localStorage.getItem('token');
       if (storedToken) {
         setToken(storedToken);
+      }
+      
+      // Load cart items from localStorage
+      const storedCartItems = JSON.parse(localStorage.getItem('cartItems'));
+      if (storedCartItems) {
+        setCartItems(storedCartItems);
       }
     }
     loadData();
