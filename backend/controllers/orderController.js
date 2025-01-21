@@ -8,22 +8,31 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const placeOrder = async (req, res) => {
     const frontendUrl = "http://localhost:5173";
     try {
+        const items = req.body.items.map(item => ({
+            ...item,
+            price: item.price * 100 // Convert price to cents
+        }));
+
+        const deliveryFee = 3 * 100; // Delivery fee in cents
+        const totalAmount = items.reduce((total, item) => total + (item.price * item.quantity), 0) + deliveryFee;
+
         const newOrder = new orderModel({
             userId: req.body.userId,
-            items: req.body.items,
-            amount: req.body.amount,
+            items: items,
+            amount: totalAmount, // Set the total amount
             address: req.body.address
         });
+
         await newOrder.save();
         await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
 
-        const lineItems = req.body.items.map((item) => ({
+        const lineItems = items.map((item) => ({
             price_data: {
                 currency: "USD",
                 product_data: {
                     name: item.name
                 },
-                unit_amount: item.price
+                unit_amount: item.price // Price in cents
             },
             quantity: item.quantity
         }));
@@ -34,22 +43,22 @@ const placeOrder = async (req, res) => {
                 product_data: {
                     name: "Delivery fee"
                 },
-                unit_amount: 3 * 100
+                unit_amount: deliveryFee // Delivery fee in cents
             },
             quantity: 1
         });
 
         const session = await stripe.checkout.sessions.create({
-            line_items: lineItems, // Corrected from lineItems to line_items
+            line_items: lineItems,
             mode: "payment",
-            success_url: `${frontendUrl}/verify?success=true&orderId=${newOrder._id}`, // Corrected from successUrl to success_url
-            cancel_url: `${frontendUrl}/verify?success=false&orderId=${newOrder._id}`, // Corrected from cancelUrl to cancel_url
+            success_url: `${frontendUrl}/verify?success=true&orderId=${newOrder._id}`,
+            cancel_url: `${frontendUrl}/verify?success=false&orderId=${newOrder._id}`,
         });
 
         res.json({ success: true, session_url: session.url });
 
     } catch (error) {
-        console.error("Error creating order:", error.message); // More specific error logging
+        console.error("Error creating order:", error.message);
         res.status(500).json({ success: false, message: error.message || "An error occurred while creating the order." });
     }
 }
