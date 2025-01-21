@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "./Order.css";
 import { Context } from "../../context/Context";
 import axios from "axios";
 
 const Order = () => {
   const { getTotalCartAmount, shoes_list, cartItems, url, token } = useContext(Context);
-
+  
   const [data, setData] = useState({
     firstName: '',
     lastName: '',
@@ -18,10 +18,30 @@ const Order = () => {
     phone: ''
   });
 
-  const onChange = (event) =>{
+  // Fetch saved address for logged-in user
+  useEffect(() => {
+    const fetchAddress = async () => {
+      try {
+        const response = await axios.get(url + "/api/user/address", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (response.data.success) {
+          setData(response.data.address);
+        }
+      } catch (error) {
+        console.error("Error fetching address:", error);
+      }
+    };
+
+    if (token) {
+      fetchAddress();
+    }
+  }, [token, url]);
+
+  const onChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
-    setData(data => ({ ...data, [name]: value }));
+    setData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const placeOrder = async (event) => {
@@ -34,21 +54,21 @@ const Order = () => {
         orderItems.push(itemInfo);
       }
     });
-  
+
     let orderData = {
       address: data,
       items: orderItems,
       amount: getTotalCartAmount() + 3,
     };
-  
+
     console.log("Order Data:", orderData); // Log order data for debugging
-  
+
     try {
       let response = await axios.post(url + "/api/order/place", orderData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log("Response:", response); // Log response for debugging
-  
+
       if (response.data.success) {
         const { session_url } = response.data;
         window.location.replace(session_url);
@@ -60,28 +80,106 @@ const Order = () => {
       alert("Error: Order placement failed");
     }
   };
-  
+
+  const saveAddress = async () => {
+    try {
+      const response = await axios.put(url + "/api/user/address", data, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.data.success) {
+        alert("Address saved successfully!");
+      } else {
+        alert("Error saving address");
+      }
+    } catch (error) {
+      console.error("Error saving address:", error);
+      alert("Error saving address");
+    }
+  };
 
   return (
     <form className="Order" onSubmit={placeOrder}>
       <div className="orderLeft">
         <p className="title">Delivery Information</p>
         <div className="fields">
-          <input type="text" name="firstName" onChange={onChange} value={data.firstName} placeholder="First Name" required />
-          <input type="text" name="lastName" onChange={onChange} value={data.lastName} placeholder="Last Name" required />
+          <input
+            type="text"
+            name="firstName"
+            onChange={onChange}
+            value={data.firstName}
+            placeholder="First Name"
+            required
+          />
+          <input
+            type="text"
+            name="lastName"
+            onChange={onChange}
+            value={data.lastName}
+            placeholder="Last Name"
+            required
+          />
         </div>
-        <input type="email" name="email" onChange={onChange} value={data.email} placeholder="Email address" required />
-        <input type="text" name="street" onChange={onChange} value={data.street} placeholder="Street" required />
+        <input
+          type="email"
+          name="email"
+          onChange={onChange}
+          value={data.email}
+          placeholder="Email address"
+          required
+        />
+        <input
+          type="text"
+          name="street"
+          onChange={onChange}
+          value={data.street}
+          placeholder="Street"
+          required
+        />
         <div className="fields">
-          <input type="text" name="city" onChange={onChange} value={data.city} placeholder="City" required />
-          <input type="text" name="state" onChange={onChange} value={data.state} placeholder="State" />
+          <input
+            type="text"
+            name="city"
+            onChange={onChange}
+            value={data.city}
+            placeholder="City"
+            required
+          />
+          <input
+            type="text"
+            name="state"
+            onChange={onChange}
+            value={data.state}
+            placeholder="State"
+          />
         </div>
 
         <div className="fields">
-          <input type="text" name="zipcode" onChange={onChange} value={data.zipcode} placeholder="Zip code" required />
-          <input type="text" name="country" onChange={onChange} value={data.country} placeholder="Country" required />
+          <input
+            type="text"
+            name="zipcode"
+            onChange={onChange}
+            value={data.zipcode}
+            placeholder="Zip code"
+            required
+          />
+          <input
+            type="text"
+            name="country"
+            onChange={onChange}
+            value={data.country}
+            placeholder="Country"
+            required
+          />
         </div>
-        <input type="text" name="phone" onChange={onChange} value={data.phone} placeholder="Phone number" required />
+        <input
+          type="text"
+          name="phone"
+          onChange={onChange}
+          value={data.phone}
+          placeholder="Phone number"
+          required
+        />
+        <button type="button" onClick={saveAddress}>Save Address</button>
       </div>
 
       <div className="orderRight">
@@ -95,16 +193,12 @@ const Order = () => {
             <hr />
             <div className="cartTotalDetails">
               <p>Delivery Fee</p>
-              <p>
-                ${getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 3}
-              </p> 
+              <p>$3</p>
             </div>
             <hr />
             <div className="cartTotalDetails">
               <b>Total</b>
-              <b>
-                ${getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 3}
-              </b>
+              <b>${getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 3}</b>
             </div>
           </div>
           <button type="submit">PROCEED TO PAYMENT</button>

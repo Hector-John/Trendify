@@ -7,4 +7,4 @@ const orderRouter = express.Router()
 
 orderRouter.post("/place", authMiddleware, placeOrder)
 
-export default orderRouter
+export default orderRouter 
