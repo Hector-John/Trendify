@@ -6,7 +6,7 @@ Trendify is a web application that allows users to manage their orders and view 
 ## Installation Instructions
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/trendify.git
+   git clone https://github.com/Hector-John/Trendify.git
    ```
 2. Navigate to the project directory:
    ```bash
@@ -27,12 +27,12 @@ Trendify is a web application that allows users to manage their orders and view 
 1. Start the backend server:
    ```bash
    cd backend
-   npm start
+   npm run server
    ```
 2. Start the frontend development server:
    ```bash
    cd frontend
-   npm start
+   npm run dev
    ```
 
 ## Contributing
